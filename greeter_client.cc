@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
     seconds = std::stoi(argv[2]);
   }
   GreeterClient greeter(grpc::CreateChannel(
-      argv[1], grpc::SslCredentials(grpc::SslCredentialsOptions())));
+      argv[1], grpc::InsecureChannelCredentials()));
   while (seconds-- > 0) {
     std::string user("world");
     std::string reply = greeter.SayHello(user);
