@@ -38,10 +38,13 @@ PROTOS_PATH = .
 
 vpath %.proto $(PROTOS_PATH)
 
-all: system-check greeter_client
+all: system-check greeter_client greeter_server
 
 greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o
 	$(CXX) $^ $(LDFLAGS) -o $@
+
+greeter_server: helloworld.pb.o helloworld.grpc.pb.o greeter_server.o
+	        $(CXX) $^ $(LDFLAGS) -o $@
 
 .PRECIOUS: %.grpc.pb.cc
 %.grpc.pb.cc: %.proto
@@ -52,7 +55,7 @@ greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o
 	$(PROTOC) -I $(PROTOS_PATH) --cpp_out=. $<
 
 clean:
-	rm -f *.o *.pb.cc *.pb.h greeter_client
+	rm -f *.o *.pb.cc *.pb.h greeter_client greeter_server
 
 
 # The following is to test your system and ensure a smoother experience.
