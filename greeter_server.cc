@@ -19,8 +19,10 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <unistd.h>
 
 #include <grpcpp/grpcpp.h>
+#include <grpc/support/alloc.h>
 
 #ifdef BAZEL_BUILD
 #include "examples/protos/helloworld.grpc.pb.h"
@@ -40,8 +42,12 @@ using helloworld::Greeter;
 class GreeterServiceImpl final : public Greeter::Service {
   Status SayHello(ServerContext* context, const HelloRequest* request,
                   HelloReply* reply) override {
-    std::string prefix("Hello ");
-    reply->set_message(prefix + request->name());
+    char* hostname = static_cast<char*>(gpr_malloc(256));
+    if (gethostname(hostname, 256) == 0) {
+      reply->set_message("Hello " + request->name() + ", this is " + hostname);
+    } else {
+      reply->set_message("Hello " + request->name() + ", failed to get hostname");
+    }
     return Status::OK;
   }
 };
